@@ -215,6 +215,13 @@ export class ThrottlerGuard implements CanActivate {
     req: Record<string, any>;
     res: Record<string, any>;
   } {
+    const contextType = context.getType<'http' | 'graphql'>();
+
+		if (contextType === 'graphql') {
+			const ctx = GqlExecutionContext.create(context).getContext();
+			return { req: ctx.req, res: ctx.res };
+		}
+    
     const http = context.switchToHttp();
     return { req: http.getRequest(), res: http.getResponse() };
   }
